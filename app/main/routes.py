@@ -163,16 +163,13 @@ def add_user():
 def login():
     username = (request.form['username'])
     password = (request.form['password'])
-    # print(username)
-    # session['用户名'] = username
-    # return redirect(url_for('route.index'))
     cursor = mysql.connection.cursor()
     cursor.execute('SELECT * FROM 用户 WHERE 用户名 = %s', (username,))
     user = cursor.fetchone()
     print(user)
     cursor.close()
     if user is not None and bcrypt.checkpw(password.encode('utf-8'), (user[1]).encode('utf-8')) and user[3] == '启用':
-        # session['user_id'] = user[2]
+        session['user_id'] = user[2]
         print(user[0])
         session['用户名'] = user[0]
         return redirect(url_for('route.index'))
