@@ -1,0 +1,5 @@
+用户名,密码,邮箱,状态,编号
+test,$2b$12$HSlwrgBeV0PgzTvnmDkgBeqqIthK7584e17wbxApZ1oG2IMHKvs1y,12345test@qq.com,启用,9
+test111,$2b$12$BfPRwmrNobnETjm3Vwe3HOi2rovLrrZAGPOlL2qmr0KIMQrCgj7g6,12345test@qq.com,启用,10
+test4567,$2b$12$aCoVtTDAebuhNui7qBhYLeDQHcKfZ5ccXg0TspdKFF0kv0QHXPYw.,122,启用,11
+testdef,$2b$12$wJ4JKiXvW150IvLxTgqZ/uRGxFsWUkxwM2.Jhq50blVNC5.a.8Ug6,qxsds@qq.com,启用,12

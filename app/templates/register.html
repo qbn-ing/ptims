@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='img/logo.gif') }}">
+
+    <title>注册页面</title>
+    <style>
+        body {
+            background-image: url('{{ url_for('static', filename='img/bk.jpg') }}');
+            background-size: cover;
+            font-family: Arial, sans-serif;
+            background-repeat: no-repeat;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+            padding: 120px;
+            background-color: rgba(0, 0, 0, 0.4);
+            background-image: url('{{ url_for('static', filename='img/logo.gif') }}');
+        {#background-size: 400px;#} background-size: contain;
+            background-attachment: fixed; /* 将背景图片固定在视口的某个位置 */
+            background-position: right center;
+            color: #fff;
+            text-shadow: 1px 1px 0 #000;
+            background-repeat: no-repeat;
+            justify-content: center;
+            align-items: center;
+            background-position: right center;
+        }
+
+    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="container">
+    <h1>注册</h1>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert-{{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    <form action="/register" onsubmit="return validateForm()" method="post">
+        <label for="username">用户名:</label>
+        <input type="text" id='username' name="username" maxlength="10" required>
+        <div id="name-hint" hidden="hidden">请输入用户名</div>
+        <label for="password">密码:</label>
+        <input type="password" id="password" name="password" maxlength="16" required>
+        <div id="password-hint" hidden="hidden"></div>
+        <!--        hidden属性设置隐藏提示部分-->
+        <label for="confirm_password">确认密码:</label>
+        <input type="password" id="confirm_password" name="confirm_password" required>
+        <div id="con_password-hint" hidden="hidden"></div>
+        <label for="email">邮箱:</label>
+        <input type="text" id='email' name="email" maxlength="25" required>
+        <div id="mail-hint" hidden="hidden">请输入邮箱</div>
+        <br>
+        <input type="submit" value="注册">
+    </form>
+</div>
+<script>
+    // 密码匹配判断
+
+
+    const nameinput = document.getElementById('username');
+    const name_hint = document.getElementById('name-hint');
+    const passwordInput = document.getElementById('password');
+    const passwordHint = document.getElementById('password-hint');
+    const con_pwd = document.getElementById('confirm_password');
+    const con_hint = document.getElementById('con_password-hint');
+    const mai_hit = document.getElementById('mail-hint');
+    passwordInput.addEventListener('input', checkPasswordStrength);
+    con_pwd.addEventListener('input', validateForm);
+    nameinput.addEventListener('input', checkUsername);
+
+    function checkUsername() {
+        if (nameinput.value != '')
+            name_hint.hidden = true;
+        else
+            name_hint.hidden = false;
+    }
+
+    //检查密码强度
+    function checkPasswordStrength() {
+        if (nameinput.value == '')
+            name_hint.hidden = false;
+        else name_hint.hidden = true;
+        passwordHint.hidden = false;
+        const password = passwordInput.value;
+        if (password.length < 8) {
+            passwordHint.textContent = '密码太短了，请至少输入8个字符';
+        } else if (!/\d/.test(password)) {
+            passwordHint.textContent = '密码必须包含数字';
+        } else if (!/[a-zA-Z]/.test(password)) {
+            passwordHint.textContent = '密码必须包含字母';
+        } else {
+            passwordHint.hidden = true;
+        }
+    }
+
+    //检测两次密码一不一样
+    function validateForm() {
+        if (nameinput.value == '')
+            name_hint.hidden = false;
+        else name_hint.hidden = true;
+        con_hint.hidden = false;
+        if (con_pwd.value != '' && con_pwd.value != passwordInput.value)
+            con_hint.textContent = '两次输入的密码不一致';
+        else
+            con_hint.hidden = true;
+    }
+
+    var form = document.querySelector('form');
+    form.addEventListener('submit', function (event) {
+        var emailInput = document.getElementById('email');
+        var email = emailInput.value.trim();
+        if (!isValidEmail(email)) {
+            event.preventDefault();
+            alert('请输入有效的邮箱地址！');
+        }
+    });
+
+    function isValidEmail(email) {
+        var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+</script>
+</body>
+</html>

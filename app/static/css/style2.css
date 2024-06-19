@@ -1,0 +1,169 @@
+{
+    font-family: Arial, sans-serif
+;
+    margin: 0
+;
+    padding: 0
+;
+}
+a {
+  color: red;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+a:hover {
+ text-decoration: underline;
+}
+
+.sidebar {
+    background-color: #333;
+    color: #fff;
+    height: 100%;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 200px;
+    padding: 20px;
+    box-sizing: border-box
+}
+
+.sidebar h2 {
+    margin-top: 0;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar li {
+    margin-bottom: 10px;
+}
+
+.sidebar a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.main {
+    margin-left: 200px;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+    /*margin: 0 auto;*/
+    /*text-align: center;*/
+    /*line-height: 1.5;*/
+}
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 83%;
+    margin-left: 200px;
+    margin-right: 0px;
+    background-color: #fff;
+    z-index: 999;
+}
+header h1 {
+    font-size: 25px;
+    margin-left: 50px;
+    text-align: center;
+    line-height: 1.5;
+    /*margin: 0;*/
+}
+
+.logo img {
+    height: 50px;
+    margin: 0 auto;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+}
+
+.user-info p {
+    margin: 0;
+    margin-right: 10px;
+}
+section {
+    display: none;
+    background-color: rgba(255, 255, 255, 0.8); /* 白色半透明背景 */
+    opacity: 1; /* 使 section 内容不透明 */
+    padding: 20px; /* 添加内边距以保持内容与边缘的距离 */
+    margin-bottom: 20px;
+}
+.user-info a {
+    color: #333;
+    text-decoration: none;
+}
+
+form {
+    margin-bottom: 20px;
+}
+
+label {
+    display: inline-block;
+    width: 100px;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"],
+select {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-size: 16px;
+}
+
+button[type="submit"] {
+    padding: 5px 10px;
+    background-color: #4CAF;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    font-size: 16px;
+    cursor: pointer
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+button {
+    padding: 5px 10px;
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    font-size: 16px;
+    cursor: pointer;
+    -right: 10px;
+}
+
+.map {
+    height: 400px;
+    border: 1px solid#ccc;
+    margin-bottom: 20px;
+    width: 100%;
+}

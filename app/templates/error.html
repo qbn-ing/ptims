@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <meta charset="UTF-8">
+      <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='img/logo.gif') }}">
+    <title>页面不存在</title>
+    <style>
+      body {
+        background-image: url('{{ url_for('static', filename='img/bk4.jpg') }}');
+        background-size: cover;
+        font-family: Arial, sans-serif;
+          background-repeat: no-repeat;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        text-align: center;
+        padding: 50px;
+        background-color: rgba(0, 0, 0, 0.4);
+        color: #fff;
+        text-shadow: 1px 1px 0 #000;
+      }
+      h1 {
+        font-size: 6em;
+        margin-bottom: 0;
+        color: #fff;
+        text-shadow: 1px 1px 0 #000;
+      }
+      p {
+        font-size: 1.5em;
+        margin-top: 0;
+        color: #aaa;
+        text-shadow: 1px 1px 0 #000;
+      }
+      a {
+        color: #fff;
+        text-decoration: none;
+        border-bottom: 2px solid #fff;
+      }
+      a:hover {
+        text-decoration: none;
+        border-bottom: 2px solid #ff0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>遇到错误</h1>
+        <p>对不起，您所访问的页面遇到错误</p>
+        <p>{{ error }}</p>
+      <p>您可以回到<a href="/">首页</a></p>
+      </form>
+    </div>
+  </body>
+</html>

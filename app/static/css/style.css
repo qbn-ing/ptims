@@ -1,0 +1,85 @@
+
+ /*.container {*/
+ /*       max-width: 800px;*/
+ /*       margin: 0 auto;*/
+ /*       text-align: center;*/
+ /*       padding: 50px;*/
+ /*       background-color: rgba(0, 0, 0, 0.7);*/
+ /*       color: #fff;*/
+ /*       text-shadow: 1px 1px 0 #000;*/
+ /*     }*/
+h1 {
+    font-size: 2em;
+    margin-top: 2em;
+}
+
+form {
+    display: inline-block;
+    text-align: left;
+    margin-top: 1em;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5em;
+}
+
+input[type="text"],
+input[type="password"] {
+    padding: 0.5em;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    width: 100%;
+    margin-bottom: 1em;
+}
+
+input[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+    padding: 0.5em;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+input[type="submit"]:hover {
+    background-color: #3e8e41;
+}
+
+.alert-error {
+    background-color: #f2dede;
+    border: 1px solid #ebccd1;
+    color: #a94442;
+    margin-bottom: 15px;
+    padding: 15px;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+    margin-bottom: 15px;
+    padding: 15px;
+}
+
+#password-hint {
+    background-color: #f2dede;
+    border: 1px solid #ebccd1;
+    color: #a94442;
+    margin-bottom: 14px;
+    padding: 5px;
+}
+#con_password-hint {
+    background-color: #f2dede;
+    border: 1px solid #ebccd1;
+    color: #a94442;
+    margin-bottom: 14px;
+    padding: 5px;
+}
+#name-hint {
+    background-color: #f2dede;
+    border: 1px solid #ebccd1;
+    color: #a94442;
+    margin-bottom: 14px;
+    padding: 5px;
+}

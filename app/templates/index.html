@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='img/logo.gif') }}">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录页面</title>
+    <style>
+        body {
+            background-image: url('{{ url_for('static', filename='img/bk.jpg') }}');
+            background-size: cover;
+            font-family: Arial, sans-serif;
+            background-repeat: no-repeat;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+            padding: 120px;
+            background-color: rgba(0, 0, 0, 0.4);
+            background-image: url('{{ url_for('static', filename='img/logo.gif') }}');
+        {#background-size: 400px;#} background-size: contain;
+            background-attachment: fixed; /* 将背景图片固定在视口的某个位置 */
+            background-position: right center;
+            color: #fff;
+            text-shadow: 1px 1px 0 #000;
+            background-repeat: no-repeat;
+            justify-content: center;
+            align-items: center;
+            background-position: right center;
+        }
+
+    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="container">
+    {#    <div class="logo">#}
+    {#        <img src="{{ url_for('static', filename='img/logo.gif') }}" alt="logo"  style="width: 100px;>#}
+    {#</div>#}
+    <h1>登录</h1>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert-{{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    <form action="/login" method="post">
+        <label for="username">用户名:</label>
+        <input type="text" name="username" autocomplete="on" maxlength="10" required>
+        <br>
+        <label for="password">密码:</label>
+        <input type="password" name="password" maxlength="16" required>
+        <br>
+        <input type="submit" value="登录">
+    </form>
+
+    <p>还没有账号？<a href="/register">点击这里注册</a></p>
+</div>
+<script>
+    setTimeout(function () {
+        var flashes = document.querySelectorAll('.flashes li');
+        for (var i = 0; i < flashes.length; i++) {
+            flashes[i].parentNode.removeChild(flashes[i]);
+        }
+    }, 2000); /* 设置flash消息持续时间为2秒钟 */
+</script>
+</body>
+</html>

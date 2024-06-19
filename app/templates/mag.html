@@ -1,0 +1,843 @@
+<!DOCTYPE>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>后台管理页面</title>
+    <style>
+        body {
+            background-image: url('{{ url_for('static', filename='img/bk2.png') }}');
+            background-size: cover;
+            font-family: Arial, sans-serif;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            opacity: 0.9;
+        }
+    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style2.css') }}">
+    <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='img/logo.gif') }}">
+</head>
+<body>
+<div class="sidebar">
+    <h2>功能菜单</h2>
+    <ul>
+        <li class="active"><a href="#user">用户管理</a></li>
+        <li><a href="#route">公交线路管理</a></li>
+        <li><a href="#station">公交站管理</a></li>
+        <li><a href="#bushome">公交车场管理</a></li>
+        <li><a href="#backup">信息备份</a></li>
+        <li><a href="#import">信息导入</a></li>
+        <li><a href="#Analysis">统计</a></li>
+    </ul>
+</div>
+<div class="main">
+    <header>
+        <h1>后台管理页面</h1>
+        <div class="logo">
+            <img src="{{ url_for('static', filename='img/logo.gif') }}" alt="logo">
+        </div>
+        <div class="user-info">
+            <p>欢迎，{{ username }} ! </p>
+            <p></p>
+            <form method="POST" action="{{ url_for('route.logout') }}">
+                <button type="submit">退出登录</button>
+            </form>
+        </div>
+    </header>
+    <section id="user">
+        <h2>用户管理</h2>
+        <form method="POST" action="{{ url_for('route.add_user') }}">
+            <label for="name">姓名：</label>
+            <input type="text" id="username" name="name"><br><br>
+            <label for="password">密码：</label>
+            <input type="password" id="password" name="password"><br><br>
+            <label for="password">邮箱：</label>
+            <input type="text" id="email" name="email"><br><br>
+            <button type="submit">新建用户</button>
+        </form>
+        <table>
+            <tr>
+                <th>姓名</th>
+                <th>密码(加盐哈希后)</th>
+                <th>邮箱</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+            {% for user in users %}
+                <tr data-name="{{ user.name }}" data-id="{{ user.id }}">
+                    <td>{{ user.name }}</td>
+                    <td>{{ user.password }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.state }}</td>
+                    <td>
+                        <form>
+                            <button class="edit">编辑</button>
+                        </form>
+
+                        <form method="POST" action="{{ url_for('route.profile') }}" class="update-form">
+                            <input type="hidden" name="id" value="{{ user.id }}">
+                            <button class="confirm" style="display:none;">确认</button>
+                        </form>
+                        <button class="cancel" style="display:none;">取消</button>
+                        <form method="POST" action="{{ url_for('route.profile_del') }}" class="delete-form">
+                            <input type="hidden" name="user_name" value="{{ user.name }}">
+                            <button class="delete">删除</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </section>
+    <section id="route">
+        <h2>公交线路管理</h2>
+        <div class="map" id="map">
+            <!-- 地图显示区域 -->
+        </div>
+        <form method="POST" action="{{ url_for('route.add_route') }}">
+            <label for="name">线路名称：</label>
+            <input type="text" id="name" name="name"><br><br>
+            <label for="homenum">所属车场号：</label>
+            <input type="text" id="homenum" name="homenum"><br><br>
+            <label for="stops">途径站点编号：(用半角,分隔开)</label>
+            <input type="text" id="stops" name="stops"><br><br>
+            <label for="status">状态：</label>
+            <select id="status" name="status">
+                <option value="正常">正常</option>
+                <option value="停用">停用</option>
+                <option value="草稿">草稿</option>
+            </select><br><br>
+            <label for="towards">上下行：</label>
+            <select id="towards" name="towards">
+                <option value="上行">上行</option>
+                <option value="下行">下行</option>
+            </select><br><br>
+            <button type="submit">新增线路</button>
+        </form>
+        <table>
+            <tr>
+                <th>线路编号</th>
+                <th>线路名称</th>
+                <th>所属车场</th>
+                <th>状态</th>
+                <th>包含站点</th>
+                <th>上下行</th>
+                <th>操作</th>
+            </tr>
+            {% for route in routes %}
+                <tr data-id="{{ route.id }}">
+                    <td>{{ route.id }}</td>
+                    <td>{{ route.name }}</td>
+                    <td>{{ route.home }}</td>
+                    <td>{{ route.statue }}</td>
+                    <td>{{ route.stop }}</td>
+                    <td>{{ route.towards }}</td>
+                    <td>
+                        <form>
+                            <button class="editr">编辑</button>
+                        </form>
+
+                        <form method="POST" action="{{ url_for('route.edit_rt') }}" class="update-formr">
+                            <input type="hidden" name="rt_id" value="{{ route.id }}">
+                            <button class="confirmr" style="display:none;">确认</button>
+                        </form>
+                        <button class="cancelr" style="display:none;">取消</button>
+                        <form method="POST" action="{{ url_for('route.delete_rt') }}" class="delete-formr">
+                            <input type="hidden" name="rt_id" value="{{ route.id }}">
+                            <button class="deleter">删除</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+        <table>
+            <tr>
+                <th>车场编号</th>
+                <th>车场名称</th>
+                <th>车场地址</th>
+                <th>状态</th>
+            </tr>
+            {% for bh in bhs %}
+                <tr>
+                    <td>{{ bh.id }}</td>
+                    <td>{{ bh.name }}</td>
+                    <td>{{ bh.ads }}</td>
+                    <td>{{ bh.statue }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </section>
+    <section id="station">
+        <h2>公交站管理</h2>
+        <div class="map" id="map1">
+            <!-- 地图显示区域 -->
+        </div>
+        <form method="POST" action="{{ url_for('route.add_station') }}">
+            <label for="name">名称：</label>
+            <input type="text" id="name" name="name"><br><br>
+            <label for="location1">经度：</label>
+            <input type="text" id="location1" name="location1"><br><br>
+            <label for="location2">纬度：</label>
+            <input type="text" id="location2" name="location2"><br><br>
+            <label for="status">状态：</label>
+            <select id="status" name="status">
+                <option value="正常">正常</option>
+                <option value="停用">停用</option>
+            </select><br><br>
+            <button type="submit">新建公交站</button>
+        </form>
+        <table>
+            <th>公交站编号</th>
+            <th>名称</th>
+            <th>位置经度</th>
+            <th>位置纬度</th>
+            <th>状态</th>
+            <th>操作</th>
+            </tr>
+            {% for station in stations %}
+                <tr data-id="{{ station.id }}">
+                    <td>{{ station.id }}</td>
+                    <td>{{ station.name }}</td>
+                    <td>{{ station.location1 }}</td>
+                    <td>{{ station.location2 }}</td>
+                    <td>{{ station.status }}</td>
+                    <td>
+                        <form>
+                            <button class="edits">编辑</button>
+                        </form>
+
+                        <form method="POST" action="{{ url_for('route.edit_bus_stop') }}" class="update-forms">
+                            <input type="hidden" name="id" value="{{ station.id }}">
+                            <button class="confirms" style="display:none;">确认</button>
+                        </form>
+                        <button class="cancels" style="display:none;">取消</button>
+                        <form method="POST" action="{{ url_for('route.delete_bus_stop') }}" class="delete-forms">
+                            <input type="hidden" name="station_id" value="{{ station.id }}">
+                            <button class="deletes">删除</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </section>
+    <section id="bushome">
+        <h2>公交车场管理</h2>
+        <form method="POST" action="{{ url_for('route.add_bush') }}">
+            <label for="name">车场名称：</label>
+            <input type="text" id="name" name="name"><br><br>
+            <label for="ads">车场地址</label>
+            <input type="text" id="ads" name="ads"><br><br>
+            <label for="status">状态：</label>
+            <select id="status" name="status">
+                <option value="正常">正常</option>
+                <option value="关闭">关闭</option>
+            </select><br><br>
+            <button type="submit">新增车场</button>
+        </form>
+        <table>
+            <tr>
+                <th>车场编号</th>
+                <th>车场名称</th>
+                <th>车场地址</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+            {% for bh in bhs %}
+                <tr data-id="{{ bh.id }}">
+                    <td>{{ bh.id }}</td>
+                    <td>{{ bh.name }}</td>
+                    <td>{{ bh.ads }}</td>
+                    <td>{{ bh.statue }}</td>
+                    <td>
+                        <form>
+                            <button class="ediths">编辑</button>
+                        </form>
+
+                        <form method="POST" action="{{ url_for('route.edit_bh') }}" class="update-formhs">
+                            <input type="hidden" name="id" value="{{ bh.id }}">
+                            <button class="confirmhs" style="display:none;">确认</button>
+                        </form>
+                        <button class="cancelhs" style="display:none;">取消</button>
+                        <form method="POST" action="{{ url_for('route.delete_bh') }}" class="delete-formhs">
+                            <input type="hidden" name="bh_id" value="{{ bh.id }}">
+                            <button class="deletehs">删除</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </section>
+    <section id="backup">
+        <h2>信息备份</h2>
+        <p>点击下面的按钮可以进行备份：</p>
+        <form method="POST" action="{{ url_for('route.backup') }}">
+            <label for="table">选择要备份的数据表：</label>
+            <select id="table" name="table">
+                <option value="用户">用户信息</option>
+                <option value="站点">公交站信息</option>
+                <option value="线路">公交线路信息</option>
+                <option value="车场">公交车场信息</option>
+            </select>
+            <br><br>
+            <button type="submit" id="backup-btn">备份</button>
+        </form>
+    </section>
+    <section id="import">
+        <h2>信息导入</h2>
+        <p>点击下面的按钮导入信息：</p>
+        <form method="POST" action="{{ url_for('route.importf') }}" enctype="multipart/form-data"
+              onsubmit="return validateForm()">
+            <label for="user_file">选择文件：</label>
+            <input type="file" id="file" name="file" accept=".csv"><br><br>
+            <label for="table">选择要导入的数据表：</label>
+            <select id="table" name="table">
+                <option value="用户">用户信息</option>
+                <option value="站点">公交站信息</option>
+                <option value="线路">公交线路信息</option>
+                <option value="车场">公交车场信息</option>
+            </select>
+            <br><br>
+            <button type="submit">导入信息</button>
+        </form>
+    </section>
+    <section id="Analysis">
+        <h2>统计</h2>
+        <table>
+            <tr>
+                <th>车场号</th>
+                <th>车场名称</th>
+                <th>线路数量</th>
+                <th>车站数量</th>
+            </tr>
+            {% for su in sus %}
+                <td>{{ su.id }}</td>
+                <td>{{ su.name }}</td>
+                <td>{{ su.sum1 }}</td>
+                <td>{{ su.sum2 }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </section>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript" src="https://api.map.baidu.com/api?v=3.0&ak="></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // 从 localStorage 中读取上一次选择的功能，如果不存在则使用默认值
+        const lastSelectedSection = localStorage.getItem('lastSelectedSection') || 'user';
+        const defaultSection = document.getElementById(lastSelectedSection);
+        defaultSection.style.display = 'block';
+
+        // 如果 localStorage 中没有保存过选择的功能，则将默认功能保存到 localStorage 中
+        if (!localStorage.getItem('lastSelectedSection')) {
+            localStorage.setItem('lastSelectedSection', 'user');
+        }
+    });
+
+    // 菜单切换的实现
+    const menuLinks = document.querySelectorAll('.sidebar a');
+    menuLinks.forEach(function (link) {
+        link.addEventListener('click', function (event) {
+            event.preventDefault();
+            const targetId = this.getAttribute('href');
+            const targetSection = document.querySelector(targetId);
+            const sections = document.querySelectorAll('section');
+            sections.forEach(function (section) {
+                section.style.display = 'none';
+            });
+            targetSection.style.display = 'block';
+            // 将当前选择的功能保存到 localStorage 中
+            localStorage.setItem('lastSelectedSection', targetId.substring(1));
+        });
+    });
+
+    //检测是否选择文件再导入
+    function validateForm() {
+        const fileInput = document.getElementById('file');
+        if (fileInput.value == '') {
+            alert('请先选择文件！');
+            return false;
+        }
+        return true;
+    }
+
+    //用户管理
+    $(document).ready(function () {
+
+        $('.confirm').hide();
+        $('.cancel').hide();
+        // 绑定删除按钮的点击事件
+        $(".delete").click(function (event) {
+            event.preventDefault();
+            var deleteForm = $(this).closest(".delete-form");
+            // 判断要删除的用户是否为当前登录用户
+            if (deleteForm.closest('tr').data('name') == '{{ username }}') {
+                alert('不能删除当前登录用户');
+            } else {
+                // 弹出确认删除对话框
+                if (confirm("确定要删除吗？")) {
+                    // 发送AJAX请求到后端路由
+                    $.ajax({
+                        type: deleteForm.attr("method"),
+                        url: deleteForm.attr("action"),
+                        data: deleteForm.serialize(),
+                        success: function (response) {
+                            // 弹出删除成功提示框
+                            alert("删除成功");
+                            // 刷新网页
+                            location.reload();
+                        },
+                        error: function (error) {
+                            console.log(error);
+                        }
+                    });
+                }
+            }
+        });
+        //绑定编辑按钮的点击事件
+
+        $('.edit').on('click', function (e) {
+            e.preventDefault();
+            const row = $(this).closest('tr');
+            const name = row.find('td:eq(0)');
+            const password = row.find('td:eq(1)');
+            const email = row.find('td:eq(2)');
+            const state = row.find('td:eq(3)');
+            const actions = row.find('td:eq(4)');
+            const Form = $(this).closest(".update-form");
+            Form.closest('tr').data('id')
+            name.html(`<input type="text" value="${name.text()}">`);
+            password.html(`<input type="password" value="${password.text()}">`);
+            email.html(`<input type="text" value="${email.text()}">`);
+            state.html(`
+            <select>
+                <option value="启用" ${state.text() === '启用' ? 'selected' : ''}>启用</option>
+                <option value="停用" ${state.text() === '停用' ? 'selected' : ''}>停用</option>
+            </select>
+        `);
+            actions.find('.edit').css('display', 'none');
+            actions.find('.delete').css('display', 'none');
+            actions.find('.confirm').css('display', 'inline');
+            actions.find('.cancel').css('display', 'inline');
+        });
+        $('.confirm').on('click', function (e) {
+            e.preventDefault();
+            const row = $(this).closest('tr');
+            const id = row.data('id');
+            const name = row.find('td:eq(0) input').val();
+            const password = row.find('td:eq(1) input').val();
+            const email = row.find('td:eq(2) input').val();
+            const state = row.find('td:eq(3) select').val();
+
+            $.ajax({
+                url: '/profile',
+                method: 'POST',
+                data: {
+                    'id': id,
+                    'name': name,
+                    'password': password,
+                    'email': email,
+                    'state': state
+                },
+                success: function (response) {
+                    if (response.result == 'success') {
+                        alert("更新成功");
+                        location.reload();
+                    } else {
+                        alert("更新失败:" + response.message);
+                        console.log(response);
+                    }
+                },
+                error: function (response) {
+                    alert("更新失败" + response.responseText);
+                    console.log(response);
+                }
+            });
+        });
+
+        $('.cancel').on('click', function (e) {
+            e.preventDefault();
+            location.reload();
+        });
+    })
+    //公交站管理
+    $(document).ready(function () {
+
+        //公交站的删除操作
+        $('.confirms').hide();
+        $('.cancels').hide();
+        // 绑定删除按钮的点击事件
+        $(".deletes").click(function (event) {
+            event.preventDefault();
+            const deleteForm = $(this).closest(".delete-forms");
+            if (confirm("确定要删除吗？")) {
+                // 发送AJAX请求到后端路由
+                $.ajax({
+                    type: deleteForm.attr("method"),
+                    url: deleteForm.attr("action"),
+                    data: deleteForm.serialize(),
+                    success: function (response) {
+                        // 弹出删除成功提示框
+                        alert("删除成功");
+                        // 刷新网页
+                        location.reload();
+                    },
+                    error: function (error) {
+                        alert(error)
+                        console.log(error);
+                    }
+                });
+            }
+
+        });
+        //绑定编辑按钮的点击事件
+
+        $('.edits').on('click', function (e) {
+            e.preventDefault();
+            const row = $(this).closest('tr');
+            const name = row.find('td:eq(1)');
+            const location1 = row.find('td:eq(2)');
+            const location2 = row.find('td:eq(3)');
+            const state = row.find('td:eq(4)');
+            const actions = row.find('td:eq(5)');
+            const Form = $(this).closest(".update-forms");
+            Form.closest('tr').data('id')
+            name.html(`<input type="text" value="${name.text()}">`);
+            location1.html(`<input type="text" value="${location1.text()}">`);
+            location2.html(`<input type="text" value="${location2.text()}">`);
+            state.html(`
+            <select>
+                <option value="正常" ${state.text() === '正常' ? 'selected' : ''}>正常</option>
+                <option value="停用" ${state.text() === '停用' ? 'selected' : ''}>停用</option>
+            </select>
+        `);
+            actions.find('.edits').css('display', 'none');
+            actions.find('.deletes').css('display', 'none');
+            actions.find('.confirms').css('display', 'inline');
+            actions.find('.cancels').css('display', 'inline');
+        });
+        $('.confirms').on('click', function (e) {
+            e.preventDefault();
+            const row = $(this).closest('tr');
+            const id = row.data('id');
+            const name = row.find('td:eq(1) input').val();
+            const l1 = row.find('td:eq(2) input').val();
+            const l2 = row.find('td:eq(3) input').val();
+            const state = row.find('td:eq(4) select').val();
+
+            $.ajax({
+                url: '/edit_bus_stop',
+                method: 'POST',
+                data: {
+                    'id': id,
+                    'name': name,
+                    'l1': l1,
+                    'l2': l2,
+                    'state': state
+                },
+                success: function (response) {
+                    if (response.result == 'success') {
+                        alert("更新成功");
+                        location.reload();
+                    } else {
+                        alert("更新失败:" + response.message);
+                        console.log(response);
+                    }
+                },
+                error: function (response) {
+                    alert("更新失败" + response.responseText);
+                    console.log(response);
+                }
+            });
+        });
+
+        $('.cancels').on('click', function (e) {
+            e.preventDefault();
+            location.reload();
+        });
+    })
+    //车场管理
+    $(document).ready(function () {
+
+        //车场的删除操作
+        $('.confirmhs').hide();
+        $('.cancelhs').hide();
+        // 绑定删除按钮的点击事件
+        $(".deletehs").click(function (event) {
+            event.preventDefault();
+            const deleteForm = $(this).closest(".delete-formhs");
+            //alert(deleteForm.attr("action"))
+            if (confirm("确定要删除吗？")) {
+                // 发送AJAX请求到后端路由
+                $.ajax({
+                    type: deleteForm.attr("method"),
+                    url: deleteForm.attr("action"),
+                    data: deleteForm.serialize(),
+                    success: function (response) {
+                        // 弹出删除成功提示框
+                        alert("删除成功");
+                        // 刷新网页
+                        location.reload();
+                    },
+                    error: function (error) {
+                        alert(error)
+                        console.log(error);
+                    }
+                });
+            }
+
+        });
+        //绑定编辑按钮的点击事件
+
+        $('.ediths').on('click', function (e) {
+            e.preventDefault();
+            const row = $(this).closest('tr');
+            const name = row.find('td:eq(1)');
+            const ads = row.find('td:eq(2)');
+            const state = row.find('td:eq(3)');
+            const actions = row.find('td:eq(4)');
+            const Form = $(this).closest(".update-formhs");
+            Form.closest('tr').data('id')
+            name.html(`<input type="text" value="${name.text()}">`);
+            ads.html(`<input type="text" value="${ads.text()}">`);
+            state.html(`
+            <select>
+                <option value="正常" ${state.text() === '正常' ? 'selected' : ''}>正常</option>
+                <option value="关闭" ${state.text() === '关闭' ? 'selected' : ''}>关闭</option>
+            </select>
+        `);
+            actions.find('.ediths').css('display', 'none');
+            actions.find('.deletehs').css('display', 'none');
+            actions.find('.confirmhs').css('display', 'inline');
+            actions.find('.cancelhs').css('display', 'inline');
+        });
+        $('.confirmhs').on('click', function (e) {
+            e.preventDefault();
+            const row = $(this).closest('tr');
+            const id = row.data('id');
+            const name = row.find('td:eq(1) input').val();
+            const ads = row.find('td:eq(2) input').val();
+            const state = row.find('td:eq(3) select').val();
+            $.ajax({
+                url: '/edit_bh',
+                method: 'POST',
+                data: {
+                    'id': id,
+                    'name': name,
+                    'ads': ads,
+                    'state': state
+                },
+                success: function (response) {
+                    if (response.result == 'success') {
+                        alert("更新成功");
+                        location.reload();
+                    } else {
+                        alert("更新失败:" + response.message);
+                        console.log(response);
+                    }
+                },
+                error: function (response) {
+                    alert("更新失败" + response.responseText);
+                    console.log(response);
+                }
+            });
+        });
+
+        $('.cancelhs').on('click', function (e) {
+            e.preventDefault();
+            location.reload();
+        });
+    })
+    //公交线路管理
+    $(document).ready(function () {
+
+        //车场的删除操作
+        $('.confirmr').hide();
+        $('.cancelr').hide();
+        // 绑定删除按钮的点击事件
+        $(".deleter").click(function (event) {
+            event.preventDefault();
+            const deleteForm = $(this).closest(".delete-formr");
+            //alert(deleteForm.attr("action"))
+            if (confirm("确定要删除吗？")) {
+                // 发送AJAX请求到后端路由
+                $.ajax({
+                    type: deleteForm.attr("method"),
+                    url: deleteForm.attr("action"),
+                    data: deleteForm.serialize(),
+                    success: function (response) {
+                        // 弹出删除成功提示框
+                        alert("删除成功");
+                        // 刷新网页
+                        location.reload();
+                    },
+                    error: function (error) {
+                        alert(error)
+                        console.log(error);
+                    }
+                });
+            }
+
+        });
+        //绑定编辑按钮的点击事件
+
+        $('.editr').on('click', function (e) {
+            e.preventDefault();
+            const row = $(this).closest('tr');
+            const name = row.find('td:eq(1)');
+            const bh = row.find('td:eq(2)');
+            const state = row.find('td:eq(3)');
+            const shops = row.find('td:eq(4)');
+            const ts = row.find('td:eq(5)');
+            const actions = row.find('td:eq(6)');
+            const Form = $(this).closest(".update-formr");
+            Form.closest('tr').data('id')
+            name.html(`<input type="text" value="${name.text()}">`);
+            bh.html(`<input type="text" value="${bh.text()}">`);
+            shops.html(`<input type="text" value="${shops.text()}">`)
+            state.html(`
+            <select>
+                <option value="正常" ${state.text() === '正常' ? 'selected' : ''}>正常</option>
+                <option value="停用" ${state.text() === '停用' ? 'selected' : ''}>停用</option>
+                <option value="草稿" ${state.text() === '草稿' ? 'selected' : ''}>草稿</option>
+            </select>
+            `);
+            ts.html(`
+            <select>
+                <option value="上行" ${state.text() === '上行' ? 'selected' : ''}>上行</option>
+                <option value="下行" ${state.text() === '下行' ? 'selected' : ''}>下行</option>
+            </select>
+            `);
+            actions.find('.editr').css('display', 'none');
+            actions.find('.deleter').css('display', 'none');
+            actions.find('.confirmr').css('display', 'inline');
+            actions.find('.cancelr').css('display', 'inline');
+        });
+        $('.confirmr').on('click', function (e) {
+            e.preventDefault();
+            const row = $(this).closest('tr');
+            const id = row.data('id');
+            const name = row.find('td:eq(1) input').val();
+            const home = row.find('td:eq(2) input').val();
+            const shops = row.find('td:eq(4) input').val();
+            const state = row.find('td:eq(3) select').val();
+            const ts = row.find('td:eq(5) select').val();
+            $.ajax({
+                url: '/edit_rt',
+                method: 'POST',
+                data: {
+                    'id': id,
+                    'name': name,
+                    'home': home,
+                    'shops': shops,
+                    'state': state,
+                    'ts': ts
+                },
+                success: function (response) {
+                    if (response.result == 'success') {
+                        alert("更新成功");
+                        location.reload();
+                    } else {
+                        alert("更新失败:" + response.message);
+                        console.log(response);
+                    }
+                },
+                error: function (response) {
+                    alert("更新失败" + response.responseText);
+                    console.log(response);
+                }
+            });
+        });
+
+        $('.cancelr').on('click', function (e) {
+            e.preventDefault();
+            location.reload();
+        });
+    })
+    //地图相关脚本
+    // 初始化地图
+    var map = new BMap.Map("map");
+    var map1 = new BMap.Map("map1");
+    var point = new BMap.Point(120.18226388941401, 35.94989760618007);
+    //设定地图默认显示中心点及缩放
+    map.centerAndZoom(point, 18);
+    map1.centerAndZoom(point, 18);
+
+    // 启用滚轮放大缩小
+    map.enableScrollWheelZoom(true);
+    map1.enableScrollWheelZoom(true);
+
+    //绘制车站
+    function addMarkers(Map, points) {
+        points.forEach(function (point) {
+            const marker = new BMap.Marker(new BMap.Point(point.longitude, point.latitude));
+            Map.addOverlay(marker);
+            //console.log("点击位置的经纬度：", point.longitude, point.latitude,point.title);
+            // alert("位置的经纬度：" + point.longitude + ", " + point.latitude + ", " + point.title);
+            // 创建文本标签
+            const label = new BMap.Label(point.title, {offset: new BMap.Size(20, -10)});
+            label.setStyle({
+                color: '#000',
+                fontSize: '12px',
+                fontWeight: 'bold',
+                backgroundColor: '#fff',
+                border: '1px solid #ccc',
+                padding: '5px',
+                width: 'auto',
+                height: 'auto'
+            });
+            marker.setLabel(label);
+        });
+    }
+
+    //在地图上标记车站和线路
+    window.onload = function () {
+        fetch('/get_points').then(response => response.json()).then(data => addMarkers(map, data));
+        fetch('/get_points').then(response => response.json()).then(data => addMarkers(map1, data));
+        fetch('/get_lines').then(response => response.json()).then(data => addLines(map, data));
+        fetch('/get_lines').then(response => response.json()).then(data => addLines(map1, data));
+        //alert('地图标记点加载完成')
+    }
+
+    //公交站处点击地图获得位置经纬度
+    map1.addEventListener("click", function (e) {
+        console.log("点击位置的经纬度：", e.point.lng, e.point.lat);
+        document.getElementById("location1").value = e.point.lng;
+        document.getElementById("location2").value = e.point.lat;
+        // 添加标记点
+    });
+
+    //绘制线路的函数
+    function addLines(Map, lines) {
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i];
+            const pointsArr = line.points.map(function (point) {
+                return new BMap.Point(point.longitude, point.latitude);
+            });
+            const polyline = new BMap.Polyline(pointsArr, {
+                strokeColor: line.color,
+                strokeWeight: 2,
+                strokeOpacity: 0.5
+            });
+            Map.addOverlay(polyline);
+        }
+    }
+
+
+    // 监听地图状态变化
+    //  map.addEventListener("dragend", function () {
+    //     var center = map.getCenter();
+    //     var zoom = map.getZoom();
+    //     console.log("当前地图中心点经度：" + center.lng);
+    //     console.log("当前地图中心点纬度：" + center.lat);
+    //     console.log("当前地图缩放级别：" + zoom);
+    //});
+
+    // map.addEventListener("zoomend", function () {
+    //     var center = map.getCenter();
+    //    var zoom = map.getZoom();
+    //     console.log("当前地图中心点经度：" + center.lng);
+    //     console.log("当前地图中心点纬度：" + center.lat);
+    //   console.log("当前地图缩放级别：" + zoom);
+    //});
+</script>
+</body>
+</html>
